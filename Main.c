@@ -1,3 +1,15 @@
+/*
+ Program: student progress services application through list data structure implementation.
+ Author: Aleksandar Lim - 991260070
+ College: Sheridan College 
+ Date: June 2, 2021
+ Class: Prog20799
+ Semester: Spring/Summer 2021
+ Purpose: Assignment 1
+ 
+ 
+ */
+
 
 #include <stdio.h>
 #include<string.h>
@@ -10,32 +22,40 @@
 #define MAX_CID_LENGTH 9
 #define MAX_REC_LENGTH 38
 
+
+
+
+
+//Define: data relevant to a college course
 struct course {
     char courseId[255];
     int credit;
     float grade;
 };
 
+//Define: string representation for data per a courses for conversions
 struct courseString {
     char courseId[255];
     char credit[255];
     char grade[255];
 };
 
+//Define: simulates a string array when many of these are stored in a array
 struct stringArray {
     char sub[255];
 };
 
+//Define: simulates a integer array when many of these are stored in a array
 struct integerArray {
     int credits;
 };
 
+//Define: simulates a float array when many of these are stored in a array
 struct floatArray {
     float grades;
 };
 
-//Define: C sub-string function definition. Fully functional - 1:04 am May 22, 2021. [X]
-
+//Define: C sub-string function that takes 4 parameters
 void substring(char chunk[], char sub[], int chunkStart, int length) {
 
     int i;
@@ -51,8 +71,35 @@ void substring(char chunk[], char sub[], int chunkStart, int length) {
 
 }//End M:*
 
+//Define: using file name and opening it in write mode creates file in same folder as this source file.
+int CreateFile(FILE *fptr, char fileName[255]) {
 
-//Report: this is fully working - 5:23pm May 20, 2021. [X]
+    //Open: open the file in write mode
+    fptr = fopen(fileName, "w");
+
+    //Check:
+    if (fptr != NULL) {
+        printf("File created successfully!\n");
+    }//End I:*
+
+        //Alternate:
+    else {
+
+        //Notify:
+        printf("Failed to create the file.\n");
+
+        // exit status for OS that an error occurred
+
+        //Report:
+        return -1;
+
+    }//End E:*
+
+    return 0;
+
+}//End M:*
+
+//Report: takes in 2 numbers and returns biggest one
 
 float WhosBigger(float num1, float num2) {
 
@@ -67,28 +114,15 @@ float WhosBigger(float num1, float num2) {
 
 }//End M:*
 
-//Report: this is fully working - 5:23pm May 20, 2021. [X]
-
-int DisplayMenu() {
-    //A: Declare
-    int userChoice;
-
-    //B: Notify
-    printf("Welcome to student progress services \n"
-            "Each menu option is indicated by a certain number as input\n"
-            "1: Max Grade, 2: Modify Grade, 3: Compute GPA, 4: Save All\n");
-
-    //C: Read
-    scanf("%d", &userChoice);
-
-    //D: Copy
-    return userChoice;
-
-}//End M:*
+//Report: 
 
 
-//Report: this is fully working - 5:23pm May 20, 2021. [X]
 
+
+//Report: 
+
+//Define: iterates course array, stores grades in new float array then shuffles it from smallest to largest.
+//Define: largest is at end of array.
 float MaxGrade(struct course cList[MAX_COURSES]) {
     //A: Compare
 
@@ -118,8 +152,25 @@ float MaxGrade(struct course cList[MAX_COURSES]) {
 
 }//End M:*
 
+void DisplayAll(struct course cList[MAX_COURSES]){
+    
+    int i;
+    for(i = 0; i < MAX_COURSES; i++){
+        printf("Course Id: ");
+        printf(cList[i].courseId);
+        printf("\n");
+        printf("Credit: ");
+        printf("%d", cList[i].credit);
+        printf("\n");
+        printf("Grade: ");
+        printf("%f", cList[i].grade);
+        printf("\n");
+    }//End F:*
 
-//Report: this is fully working - 5:41pm May 20, 2021. [X]
+}//End M:*
+
+
+//Report: Takes in new grade and program name then loops course array to find match and then updates grade.
 
 void ModifyGrade(struct course cList[MAX_COURSES], float grade, char cName[255]) {
     int i;
@@ -138,54 +189,9 @@ void ModifyGrade(struct course cList[MAX_COURSES], float grade, char cName[255])
 }//End M:*
 
 
-//Report: this is fully working - 5:23pm May 20, 2021. [X]
 
-void ComputeGPA(struct course cList[MAX_COURSES]) {
-    
-    //A: Declare:
-    int i;
-    float sum = 0.0;
-    
-    //B: Add:
-    for(i = 0; i < MAX_COURSES; i++){
-        sum +=  cList[i].grade;
-    }//End F:*
-    
-    //C: Divide.
-    float result = sum / MAX_COURSES;
 
-    //D: Notify.
-    printf("GPA or Average = %f", result);
-
-}//End M:*
-
-int CreateFile(FILE *fptr, char fileName[255]) {
-
-    //Open: open the file in write mode
-    fptr = fopen(fileName, "w");
-
-    //Check:
-    if (fptr != NULL) {
-        printf("File created successfully!\n");
-    }//End I:*
-
-        //Alternate:
-    else {
-
-        //Notify:
-        printf("Failed to create the file.\n");
-
-        // exit status for OS that an error occurred
-
-        //Report:
-        return -1;
-
-    }//End E:*
-
-    return 0;
-
-}//End M:*
-
+//Define: Open file when given name as string and if in write mode will clear data once in it.
 int ClearFile(FILE *fptr, char fileName[255]) {
 
     //Open: open the file in write mode
@@ -198,6 +204,8 @@ int ClearFile(FILE *fptr, char fileName[255]) {
 
 }//End M:*
 
+
+//Define: while loop uses FGETS to read one line a time and stores each in a simulated array that gets returned.
 struct stringArray* ReadFile(
         FILE *fptr,
         char fileName[255], 
@@ -225,7 +233,7 @@ struct stringArray* ReadFile(
 }//End M:*
 
 
-//Report: Fully Functional [X]
+//Report: gets position of comma and colon two extract data items to a string course STRUCT and then returns it.
 struct courseString GetRecord(
         struct stringArray records[MAX_COURSES],
         int row
@@ -350,14 +358,17 @@ struct courseString GetRecord(
 
 }//End M:*
 
+//Define: under construction. Going to check capacity of array and then multiple it by two to simulate resizing a array.
 void growStrArray(struct stringArray sTarg[12]) {
 
 }//End M:*
 
+//Define: under construction. Going to check capacity of array and then multiple it by two to simulate resizing a array.
 void growIntArray(struct stringArray iTarg[12]) {
 
 }//End M:*
 
+//Define: Takes in array of records as each line a record and converts and populates proper course array for further data processing.
 struct course* FillCourseArray(struct stringArray records[MAX_COURSES]) {
     
    struct course cList[MAX_COURSES];
@@ -393,6 +404,7 @@ struct course* FillCourseArray(struct stringArray records[MAX_COURSES]) {
    
 }//End M:*
 
+//Define: Before saving, we need labels for each data item and colon and comma for when the file is read later on in next app run.
  char* FormatBeforeSaving(struct course cList[MAX_COURSES], int row) {
 
     char resulty[255];
@@ -430,8 +442,9 @@ struct course* FillCourseArray(struct stringArray records[MAX_COURSES]) {
     return finalist;
 }//End M:*
 
-//Define: concatenate all records to one line then write to output file. Fully Functional - 7:48pm - May 23, 2021. [X]
+//Define: 
 
+ //Define: this calls format before method then appends each line as record as string to desired file.
 int AppendFile(FILE *fptr, char fileName[255], struct course cList[MAX_COURSES]) {
 
     char *record;
@@ -457,49 +470,71 @@ int AppendFile(FILE *fptr, char fileName[255], struct course cList[MAX_COURSES])
 
 }//End M:*
 
-//Notice: Program starts in this function.
-
-int main() {
-
-    struct course cList[MAX_COURSES];
-
-    FILE *fptr;
-
-    struct stringArray* pRecords;
+float GetGradePoint(float grade){
+    float result = 0.0;
     
-    pRecords = ReadFile(fptr, "newstudent.txt", MAX_COURSES);
+    if(grade >= 90.0 && grade <= 100.0){
+        result = 4.0;
+    }//End I:*
+    else if(grade >= 85.0 && grade <= 89.0){
+        result = 3.8;
+    }//End I:*
+    else if(grade >= 80.0 && grade <= 84.0){
+        result = 3.6;
+    }//End I:*
+    else if(grade >= 75.0 && grade <= 79.0){
+        result = 3.3;
+    }//End I:*
+    else if(grade >= 70.0 && grade <= 74.0){
+        result = 3.0;
+    }//End I:*
+    else if(grade >= 65.0 && grade <= 69.0){
+        result = 2.5;
+    }//End I:*
+    else if(grade >= 60.0 && grade <= 64.0){
+        result = 2.0;
+    }//End I:*
+    else if(grade >= 50.0 && grade <= 54.0){
+        result = 1.0;
+    }//End I:*
+    else if(grade >= 0.0 && grade <= 49.0){
+        result = 0.0;
+    }//End I:*
+    return result;
+}//End F:*
+
+//Report: Iterates course array and adds grades then divides by amount of grades and prints result.
+
+int ComputeGPA(struct course cList[MAX_COURSES]) {
     
-    struct stringArray records[MAX_COURSES];
-    
+    float result;
     int i;
-    for(i = 0; i < MAX_COURSES; i++){
-        strncpy(records[i].sub, pRecords->sub, MAX_REC_LENGTH);
-        pRecords++;
-    }//End F:*
     
-  struct course* cListPointer;    
-
-   cListPointer = FillCourseArray(records);  
-  
     for(i = 0; i < MAX_COURSES; i++){
-        cList[i].credit = cListPointer->credit;
-        cList[i].grade = cListPointer->grade;
-        strncpy(cList[i].courseId, cListPointer->courseId, 255);
-        cList[i].courseId[9] = '\0';
-        cListPointer++;
+        result += (GetGradePoint(cList[i].grade) * cList[i].credit);
     }//End F:*
   
-  
+   
+    printf("GPA or Average = %f", result);
+
+    return 0;
+}//End M:*
+
+
+
+//Define: displays menus items as matched two integers and returns user choice
+int DisplayMenu(struct course cList[MAX_COURSES], FILE *fptr) {
+    //A: Declare
+   
     bool flag = true;
     int uChoice;
     float uChoiceFloat;
     char courseToApply[255];
     
-    
       while (flag) {
 
         printf("\n");
-        printf("1: Max Grade, 2: Modify Grade, 3: GPA Calculator, 4: Save All, 5: Quit\n");
+        printf("1: Max Grade, 2: Modify Grade, 3: GPA Calculator, 4: Display All, 5: Save All, 6: Quit\n");
         scanf("%d", &uChoice);
 
         if (uChoice == 1) {
@@ -526,22 +561,64 @@ int main() {
         }//End EI:*
 
         else if (uChoice == 4) {
+            DisplayAll(cList);
+        }//End I:*
+        
+        else if (uChoice == 5) {
 
-            ClearFile(fptr, "newstudent.txt");
-            AppendFile(fptr, "newstudent.txt", cList);
+            ClearFile(fptr, "grades.txt");
+            AppendFile(fptr, "grades.txt", cList);
             printf("\n");
         }//End I:*
 
-        else if (uChoice == 5) {
+        else if (uChoice == 6) {
             flag = false;
         }//End I:*
 
         else {
-            printf("Options range from 1-5 as integer values");
+            printf("Options range from 1-6 as integer values");
         }//End E:*
 
     }//End W:*
+
+}//End M:*
+
+//Define: overall algorithm of program. Main use cases in here. 
+
+int main() {
+
+    struct course cList[MAX_COURSES];
+
+    FILE *fptr;
+
+    struct stringArray* pRecords;
+    
+    pRecords = ReadFile(fptr, "grades.txt", MAX_COURSES);
+    
+    struct stringArray records[MAX_COURSES];
+    
+    int i;
+    for(i = 0; i < MAX_COURSES; i++){
+        strncpy(records[i].sub, pRecords->sub, MAX_REC_LENGTH);
+        pRecords++;
+    }//End F:*
+    
+  struct course* cListPointer;    
+
+   cListPointer = FillCourseArray(records);  
+  
+    for(i = 0; i < MAX_COURSES; i++){
+        cList[i].credit = cListPointer->credit;
+        cList[i].grade = cListPointer->grade;
+        strncpy(cList[i].courseId, cListPointer->courseId, 255);
+        cList[i].courseId[9] = '\0';
+        cListPointer++;
+    }//End F:*
+  
    
+    DisplayMenu(cList, fptr);
+   
+
     return 0;
 
 }//End M:*
