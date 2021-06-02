@@ -9,8 +9,7 @@
  
  
  */
-
-
+ 
 #include <stdio.h>
 #include<string.h>
 #include <stdlib.h>
@@ -21,10 +20,6 @@
 #define MAX_GRADE_LENGTH 4
 #define MAX_CID_LENGTH 9
 #define MAX_REC_LENGTH 38
-
-
-
-
 
 //Define: data relevant to a college course
 struct course {
@@ -54,6 +49,7 @@ struct integerArray {
 struct floatArray {
     float grades;
 };
+
 
 //Define: C sub-string function that takes 4 parameters
 void substring(char chunk[], char sub[], int chunkStart, int length) {
@@ -114,12 +110,6 @@ float WhosBigger(float num1, float num2) {
 
 }//End M:*
 
-//Report: 
-
-
-
-
-//Report: 
 
 //Define: iterates course array, stores grades in new float array then shuffles it from smallest to largest.
 //Define: largest is at end of array.
@@ -152,12 +142,13 @@ float MaxGrade(struct course cList[MAX_COURSES]) {
 
 }//End M:*
 
+
 void DisplayAll(struct course cList[MAX_COURSES]){
     
     int i;
     for(i = 0; i < MAX_COURSES; i++){
         printf("Course Id: ");
-        printf(cList[i].courseId);
+        printf("%s", cList[i].courseId);
         printf("\n");
         printf("Credit: ");
         printf("%d", cList[i].credit);
@@ -187,8 +178,6 @@ void ModifyGrade(struct course cList[MAX_COURSES], float grade, char cName[255])
     }//End F:*
 
 }//End M:*
-
-
 
 
 //Define: Open file when given name as string and if in write mode will clear data once in it.
@@ -404,71 +393,11 @@ struct course* FillCourseArray(struct stringArray records[MAX_COURSES]) {
    
 }//End M:*
 
-//Define: Before saving, we need labels for each data item and colon and comma for when the file is read later on in next app run.
- char* FormatBeforeSaving(struct course cList[MAX_COURSES], int row) {
 
-    char resulty[255];
-    //Notice: don't add square brackets
-    char *finalist;
-    char grade[255];
-    char credit[255];
-            
-   //notice: 255 is bytes and matches the var we set aside above. 
-    strncpy(resulty, "credit:", 255);
-
-    //Convert: float and integer to string.
-    sprintf(credit, "%d", cList[row].credit);
-    sprintf(grade, "%f", cList[row].grade);
-  
-    credit[1] = '\0';
-    grade[4] = '\0';
-    cList[row].courseId[9] = '\0';
-    
-    strlcat(resulty, credit, 255);
-    
-    strlcat(resulty, ",", 255);
-    
-    strlcat(resulty, "grade:", 255);
-    strlcat(resulty, grade, 255);
-    strlcat(resulty, ",", 255);
-    strlcat(resulty, "courseid:", 255);
-    strlcat(resulty, cList[row].courseId, 255);
-    strlcat(resulty, ",", 255);
-
-    resulty[39] = '\0';
- 
-    finalist = resulty;
-    
-    return finalist;
-}//End M:*
 
 //Define: 
 
- //Define: this calls format before method then appends each line as record as string to desired file.
-int AppendFile(FILE *fptr, char fileName[255], struct course cList[MAX_COURSES]) {
 
-    char *record;
-   
-    int i;
-    
-    //Open: open the file in write mode
-    fptr = fopen(fileName, "a");
-     
-    char resulty[255];
-    
-    for(i = 0; i < MAX_COURSES; i++){
-        record = FormatBeforeSaving(cList, i);
-        strncpy(resulty, record, 255);
-        fprintf(fptr, "%s", resulty);
-        fprintf(fptr, "\n");
-    }//End F:*
-       
-    //D.0: Close:  connection
-    fclose(fptr);
-
-    return 0;
-
-}//End M:*
 
 float GetGradePoint(float grade){
     float result = 0.0;
@@ -507,20 +436,287 @@ float GetGradePoint(float grade){
 
 int ComputeGPA(struct course cList[MAX_COURSES]) {
     
-    float result;
+    float sumOfPointsByCredits;
     int i;
+    float finalist;
+    int sumCredits;
     
     for(i = 0; i < MAX_COURSES; i++){
-        result += (GetGradePoint(cList[i].grade) * cList[i].credit);
+        sumOfPointsByCredits += (GetGradePoint(cList[i].grade) * cList[i].credit);
+        sumCredits += cList[i].credit;
     }//End F:*
-  
-   
-    printf("GPA or Average = %f", result);
+    
+    finalist = sumOfPointsByCredits / sumCredits;
+     
+    printf("GPA or Average = %f", finalist);
 
     return 0;
 }//End M:*
 
+//Define: overall algorithm of program. Main use cases in here. 
 
+
+char* FloatToString(float target){
+    
+    //Declare: pointer and char equivalent 
+    char* pResult;
+    char result[255];
+    
+    //Convert: to truncate the remainder.
+    int conv = (int)target;
+    
+    //Get: the remainder and save it.
+    float remain = target - conv;
+    
+    //Format: move the digit we want before decimal
+    float pushDecimal = remain * 10;
+    
+    //Convert: so we get the digit by itself. 
+    int finalRemain = (int)pushDecimal;
+    
+    //Declare: a holder for our swaps.
+    int numAr[4];
+    
+    //Extract: each digit and store each in a array
+    int i;
+    for(i = 0; i < 2; i++){
+         int stripper = conv % 10;
+         numAr[i] = stripper;
+         conv = conv / 10;
+    }//End F:*
+    
+    //Reverse: their backward so swap with a temp var
+    int tempest = numAr[0];
+    numAr[0] = numAr[1];
+    numAr[1] = tempest;
+    
+    //Evaluate: check with 0-9 range then assign appropriate string version.
+    for(i = 0; i < 2; i++){
+      if(numAr[i] == 0){
+          result[i] = '0';
+      }//End I:*  
+      else if(numAr[i] == 1){
+          result[i] = '1';
+      }//End I:*  
+       else if(numAr[i] == 2){
+          result[i] = '2';
+      }//End I:*  
+       else if(numAr[i] == 3){
+          result[i] = '3';
+      }//End I:*  
+       else if(numAr[i] == 4){
+          result[i] = '4';
+      }//End I:*  
+       else if(numAr[i] == 5){
+          result[i] = '5';
+          
+      }//End I:*  
+       else if(numAr[i] == 6){
+          result[i] = '6';
+      }//End I:*  
+      
+       else if(numAr[i] == 7){
+          result[i] = '7';
+      }//End I:*  
+       else if(numAr[i] == 8){
+          result[i] = '8';
+      }//End I:*  
+       else if(numAr[i] == 9){
+          result[i] = '9';
+      }//End I:*  
+      
+    }//End F:*
+    
+    //Insert: The decimal back in the right position 
+    result[2] = '.';
+    
+    //Check: the remainder against a range of base 10 numbers that make up all numbers.
+     if(finalRemain == 0){
+          result[3] = '0';
+      }//End I:*  
+     else if(finalRemain == 1){
+          result[3] = '1';
+      }//End I:*  
+     else if(finalRemain == 2){
+          result[3] = '2';
+      }//End I:*  
+       else if(finalRemain == 3){
+          result[3] = '3';
+      }//End I:*  
+       else if(finalRemain == 4){
+          result[3] = '4';
+      }//End I:*  
+       else if(finalRemain == 5){
+          result[3] = '5';      
+      }//End I:*  
+       else if(finalRemain == 6){
+          result[3] = '6';
+      }//End I:*  
+       else if(finalRemain == 7){
+          result[3] = '7';
+      }//End I:*  
+       else if(finalRemain == 8){
+          result[3] = '8';
+      }//End I:*  
+       else if(finalRemain == 9){
+          result[3] = '9';
+      }//End I:*  
+    
+    //Assign: the char result as conversion to a pointer so we can return it. 
+    pResult = result;
+    
+    //Copy: bring it back now.
+    return pResult; 
+}//End M:*
+
+char* IntToString(int target){
+    
+    char* pResult;
+    
+    
+      if(target == 0){
+          pResult = "0";     
+      }//End I:*  
+    
+      else if(target == 1){
+          pResult = "1";
+      }//End I:*
+    
+       else if(target == 2){
+          pResult = "2";
+         
+      }//End I:*
+    
+       else if(target == 3){
+           
+          pResult = "3";
+         
+      }//End I:*  
+    
+       else if(target == 4){
+          pResult = "4";
+       
+      }//End I:*  
+    
+       else if(target == 5){
+          pResult = "5";
+        
+      }//End I:*  
+    
+       else if(target == 6){
+          pResult = "6";
+       
+      }//End I:*  
+    
+       else if(target == 7){
+          pResult = "7";
+       
+      }//End I:*  
+    
+       else if(target == 8){
+          pResult = "8";
+          
+      }//End I:*  
+    
+       else if(target == 9){
+          pResult = "9";
+         
+      }//End I:*  
+      
+    return pResult;
+    
+}//End M:*
+
+char* CustomConcat(char* appendedTo, char* theAppended){
+    
+    //Declare holder and pointer for result.
+     char* pResult;
+     char result[255];
+     
+    int lenny1 = strlen(appendedTo);
+    int lenny2 = strlen(theAppended);
+    int fullL = lenny1 + lenny2;
+     
+    int i;
+    
+    for(i = 0; i < lenny1; i++){
+        result[i] = appendedTo[i];
+    }//End F:*
+    
+    for(i = 0; i < lenny2; i++){
+        result[lenny1] = theAppended[i];
+        lenny1++;
+    }//End F:*
+    
+    result[fullL] = '\0';
+    
+    pResult = result;
+     
+    return pResult;
+  
+}//End M:*
+
+
+//Define: Before saving, we need labels for each data item and colon and comma for when the file is read later on in next app run.
+ char* FormatBeforeSaving(struct course cList[MAX_COURSES], int row) {
+
+    //Notice: don't add square brackets
+    char* finalist = "credit:";
+ 
+    //Convert: float and integer to string.
+    
+    char* creditConv = IntToString(cList[row].credit);
+    
+    //char* pCredConv = &creditConv; Remember this piece. 
+    
+    char* gradeConv = FloatToString(cList[row].grade);
+         
+    cList[row].courseId[9] = '\0';
+    
+    finalist = CustomConcat(finalist, creditConv);
+    
+    finalist = CustomConcat(finalist, ",");
+     
+    finalist = CustomConcat(finalist, "grade:");
+    
+    finalist = CustomConcat(finalist, gradeConv);
+    
+    finalist = CustomConcat(finalist, ",");
+  
+    finalist = CustomConcat(finalist, "courseid:");
+    
+    finalist = CustomConcat(finalist, cList[row].courseId);
+    
+    finalist = CustomConcat(finalist, ",");
+    
+    return finalist;
+    
+}//End M:*
+
+ //Define: this calls format before method then appends each line as record as string to desired file.
+int AppendFile(FILE *fptr, char fileName[255], struct course cList[MAX_COURSES]) {
+
+    char *singleRecord;
+    char resulty[255];
+   
+    int i;
+    
+    //Open: open the file in write mode
+    fptr = fopen(fileName, "a");
+         
+    for(i = 0; i < MAX_COURSES; i++){
+        singleRecord = FormatBeforeSaving(cList, i);
+        strncpy(resulty, singleRecord, 255);
+        fprintf(fptr, "%s", resulty);
+        fprintf(fptr, "\n");
+    }//End F:*
+       
+    //D.0: Close:  connection
+    fclose(fptr);
+
+    return 0;
+
+}//End M:*
 
 //Define: displays menus items as matched two integers and returns user choice
 int DisplayMenu(struct course cList[MAX_COURSES], FILE *fptr) {
@@ -583,8 +779,6 @@ int DisplayMenu(struct course cList[MAX_COURSES], FILE *fptr) {
 
 }//End M:*
 
-//Define: overall algorithm of program. Main use cases in here. 
-
 int main() {
 
     struct course cList[MAX_COURSES];
@@ -617,8 +811,8 @@ int main() {
   
    
     DisplayMenu(cList, fptr);
-   
-
+    
+  
     return 0;
 
 }//End M:*
