@@ -50,7 +50,6 @@ struct floatArray {
     float grades;
 };
 
-
 //Define: C sub-string function that takes 4 parameters
 void substring(char chunk[], char sub[], int chunkStart, int length) {
 
@@ -116,7 +115,7 @@ float WhosBigger(float num1, float num2) {
 float MaxGrade(struct course cList[MAX_COURSES]) {
     //A: Compare
 
-    int i, j, k;
+    int i, j;
     float grades[MAX_COURSES];
 
     for (i = 0; i < MAX_COURSES; i++) {
@@ -147,15 +146,25 @@ void DisplayAll(struct course cList[MAX_COURSES]){
     
     int i;
     for(i = 0; i < MAX_COURSES; i++){
+        
+        //A:
         printf("Course Id: ");
         printf("%s", cList[i].courseId);
         printf("\n");
+        printf("\n");
+        
+        //B:
         printf("Credit: ");
         printf("%d", cList[i].credit);
         printf("\n");
+        printf("\n");
+        
+        //C:
         printf("Grade: ");
         printf("%f", cList[i].grade);
         printf("\n");
+        printf("\n");
+        
     }//End F:*
 
 }//End M:*
@@ -183,12 +192,14 @@ void ModifyGrade(struct course cList[MAX_COURSES], float grade, char cName[255])
 //Define: Open file when given name as string and if in write mode will clear data once in it.
 int ClearFile(FILE *fptr, char fileName[255]) {
 
-    //Open: open the file in write mode
+    
+    //A: Open: open the file in write mode
     fptr = fopen(fileName, "w");
 
-    //D.0: Close:  connection
+    //B:Close: the connection
     fclose(fptr);
 
+    //C: Copy: 
     return 0;
 
 }//End M:*
@@ -201,22 +212,26 @@ struct stringArray* ReadFile(
         int size
         ) {
 
+    //A: Declare: 
     struct stringArray records[size];
     struct stringArray *pRecords;
     
-    //B.0: Open: open file for reading: all records on same line separated by comma.
+    //B: Open: open file for reading: all records on same line separated by comma.
     fptr = fopen(fileName, "r");
     int counter = 0;
 
+    //C: Repeat: 
     while (fgets(records[counter].sub, 255, fptr) != NULL) {
         counter++;
     }//End W:*
     
+    //D: Assign:
     pRecords = records;
   
-    //D.0: Close: connection
+    //E: Close: connection
     fclose(fptr);
 
+    //F: Copy: 
     return pRecords; 
     
 }//End M:*
@@ -228,95 +243,82 @@ struct courseString GetRecord(
         int row
         ) {
 
+    //A.0: Declare: 
     int i;
-    
-    int colonCreditPos;
-    int commaCreditPos;
-    
-    int colonGradePos;
-    int commaGradePos;
-    
-    int colonCIdPos;
-    int commaCIdPos;
-    
+    int colonPos;
+    int commaPos;
+   
+
+    //B: Assign: 
     char colon[255] = ":";
     char comma[255] = ",";
 
+    //C: Declare: 
     struct courseString singleRecord;
     
+    //D: Declare: 
     char credita[255];
     char grady[255];
     char cIda[255];
     
+    //E: Get: 
     int lenny = strlen(records[row].sub);
 
-    //Get: colon start position as integer
+    //F: Get: colon start position as integer
     for (i = 0; i < lenny; i++) {
         if (records[row].sub[i] == colon[0]) {
-            colonCreditPos = i;         
+            colonPos = i;         
+        }//End I:*
+        if (records[row].sub[i] == comma[0]) {
+            commaPos = i;
             break;
         }//End I:*
     }//End F:*
 
-    //Get: ending comma position as integer
-    for (i = 0; i < lenny; i++) {
-        if (records[row].sub[i] == comma[0]) {
-            commaCreditPos = i;
-            break;
-        }//End I:*
-    }//End F:*
-    
-   
-    //Extract: credit item as sub-string of full line of text
-    for (i = colonCreditPos + 1; i < commaCreditPos; i++) {
+ 
+    //H: Extract: credit item as sub-string of full line of text
+    for (i = colonPos + 1; i < commaPos; i++) {
         credita[0] = records[row].sub[i];
     }//End F:*
     
-   
+ 
     //Get: starting colon position as integer
-    for (i = commaCreditPos + 1; i < lenny; i++) {
+    for (i = commaPos + 1; i < lenny; i++) {
         if (records[row].sub[i] == colon[0]) {
-            colonGradePos = i;
+            colonPos = i;
+        }//End I:*
+        if (records[row].sub[i] == comma[0]) {
+            commaPos = i;
             break;
         }//End I:*
     }//End F:*
 
-    //Get: ending comma position as integer
-    for (i = commaCreditPos + 1; i < lenny; i++) {
-        if (records[row].sub[i] == comma[0]) {
-            commaGradePos = i;
-            break;
-        }//End I:*
-    }//End F:*
     
-    int gradeCount = 0;
+    
+    int counter = 0;
     //Extract: grade item as sub-string of full line of text
-    for (i = colonGradePos + 1; i < commaGradePos; i++) {
-        grady[gradeCount] = records[row].sub[i];
-        gradeCount++;
+    for (i = colonPos + 1; i < commaPos; i++) {
+        grady[counter] = records[row].sub[i];
+        counter++;
     }//End F:*
     
     //Get: colon position as integer.
-    for (i = commaGradePos + 1; i < lenny; i++) {
+    for (i = commaPos + 1; i < lenny; i++) {
         if (records[row].sub[i] == colon[0]) {
-            colonCIdPos = i;
+            colonPos = i;
+        }//End I:*
+        if (records[row].sub[i] == comma[0]) {
+            commaPos = i;
             break;
         }//End I:*
     }//End F:*
 
-    //Get: Ending comma position as integer
-    for (i = commaGradePos + 1; i < lenny; i++) {
-        if (records[row].sub[i] == comma[0]) {
-            commaCIdPos = i;
-            break;
-        }//End I:*
-    }//End F
-    
-    int cIdCount = 0;
+
+    counter = 0;
     //Extract: c id item as sub-string of full line of text
-    for (i = colonCIdPos + 1; i < MAX_REC_LENGTH; i++) {
-        cIda[cIdCount] = records[row].sub[i];
-        cIdCount++;
+    for (i = colonPos + 1; i < MAX_REC_LENGTH; i++) {
+        cIda[counter] = records[row].sub[i];
+        counter++;
     }//End F:*
    
     char cleanCred[255];
@@ -369,24 +371,14 @@ struct course* FillCourseArray(struct stringArray records[MAX_COURSES]) {
    int i;
    
    for(i = 0; i < MAX_COURSES; i++){
-      cListString[i] = GetRecord(records, i);
-   }//End F:*
-   
-   for(i = 0; i < MAX_COURSES; i++){
+       cListString[i] = GetRecord(records, i);
        credits[i] = atoi(cListString[i].credit);
        cList[i].credit = credits[i];
-   }//End F:*
-   
-   for(i = 0; i < MAX_COURSES; i++){
        grades[i] = atof(cListString[i].grade);
        cList[i].grade = grades[i]; 
-   }//End F:*
-  
-   //Recall: 3rd parameter in STRNCPY is byte size that matches the var your declared. not length of characters. Lost time here...
-   for(i = 0; i < MAX_COURSES; i++){
        strncpy(cList[i].courseId, cListString[i].courseId, 255);
    }//End F:*
-   
+     
    resultCList = cList; 
    
    return resultCList; 
@@ -394,11 +386,7 @@ struct course* FillCourseArray(struct stringArray records[MAX_COURSES]) {
 }//End M:*
 
 
-
-//Define: 
-
-
-
+//Define: Maps grade points that reflects range of grades as a category.
 float GetGradePoint(float grade){
     float result = 0.0;
     
